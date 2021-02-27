@@ -17,10 +17,10 @@ float randomFloat () {
 #define SAMPLERATE 44100
 
 void stdout_write_float (char * samplePtr) {
-  printf("%c", samplePtr[0]);
-  printf("%c", samplePtr[1]);
-  printf("%c", samplePtr[2]);
-  printf("%c", samplePtr[3]);
+  printf("%c%c%c%c", samplePtr[0], samplePtr[1], samplePtr[2], samplePtr[3]);
+  // printf("%c", samplePtr[1]);
+  // printf("%c", samplePtr[2]);
+  // printf("%c", samplePtr[3]);
 }
 
 int main(int argc, char **argv) {
