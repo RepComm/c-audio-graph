@@ -59,11 +59,36 @@ void AudioNode_connectNode (struct AudioNode * src, struct AudioNode * dest) {
 
 void AudioNode_renderSample (struct AudioNode * node, double time, float * out) {
   if (node->type == OscillatorNode) {
+    //sine
+
     *out = sine_wave(
       time,
       //get the frequency value from node params
       ((struct OscillatorNodeParams *) node->params)->frequency.value
     ) / 2;
+
+
+    //square
+
+    // if (sine_wave_with_precision(
+    //   time,
+    //   //get the frequency value from node params
+    //   ((struct OscillatorNodeParams *) node->params)->frequency.value,
+    //   5
+    // ) > 0.5) {
+    //   *out = 0.4;
+    // } else {
+    //   *out = -0.4;
+    // }
+
+    //triangle
+
+    // *out = m_arcsin(sine_wave_with_precision(
+    //   time,
+    //   //get the frequency value from node params
+    //   ((struct OscillatorNodeParams *) node->params)->frequency.value,
+    //   5
+    // )) / 4;
   } else if (node->type == DestinationNode) {
     struct lln * current = node->inputs;
     

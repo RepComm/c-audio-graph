@@ -10,20 +10,15 @@
 
 #include "./generators.c"
 
-float randomFloat () {
-  return rand() / (float) RAND_MAX;
-}
+#include "./audiograph/cat.c"
 
 #define SAMPLERATE 44100
 
 void stdout_write_float (char * samplePtr) {
   printf("%c%c%c%c", samplePtr[0], samplePtr[1], samplePtr[2], samplePtr[3]);
-  // printf("%c", samplePtr[1]);
-  // printf("%c", samplePtr[2]);
-  // printf("%c", samplePtr[3]);
 }
 
-int main(int argc, char **argv) {
+void graphtest_0 () {
   bool debug = false;
 
   //Create an audio context graph
@@ -49,10 +44,12 @@ int main(int argc, char **argv) {
 
   bool doProcess = true;
   int counter = 0;
-  int max = 1024;
+  int max = 2048;
+
+  ((struct OscillatorNodeParams *)osc->params)->frequency.value = 440/2;
 
   while (doProcess) {
-    ((struct OscillatorNodeParams *)osc->params)->frequency.value += 0.1;
+    ((struct OscillatorNodeParams *)osc->params)->frequency.value += 1;
 
     //Render
     ctx->renderSamples(ctx, outputBuffer, outputBufferSize);
@@ -65,8 +62,27 @@ int main(int argc, char **argv) {
     counter ++;
     if (counter > max) {
       doProcess = false;
+      // exit(0);
       break;
     }
+  }
+}
+
+int main(int argc, char **argv) {
+  TrackP track = Track_create();
+  
+  printf("Created track %p\n", track);
+
+  track->addKeyFrame(track, 0.01, 0.01, false);
+  track->addKeyFrame(track, 10.0, 2.0, false);
+  track->addKeyFrame(track, 20.0, 1.0, true);
+
+  printf("Track duration %f\n", track->duration);
+
+  for (float i=0.0; i < track->duration; i+=0.5) {
+    float value = Track_getValueAtTime(track, i);
+    // float value = i;
+    printf("Value at time %f is %f\n", i, value);
   }
 
   return 0;

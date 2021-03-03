@@ -8,6 +8,7 @@
 struct AudioGraph {
   struct lln * nodes;
   int sampleRate;
+  double secondsInterval;
   struct AudioNode * destination;
   double seconds;
 
@@ -45,8 +46,8 @@ void AudioGraph_renderSample (struct AudioGraph * thiz, double seconds, float * 
 void AudioGraph_renderSamples (struct AudioGraph * thiz, float out[], int outSize) {
   //TODO calculate seconds
   for (int i=0; i<outSize; i++) {
-    thiz->seconds += 0.001;
-    // out[i] = 0.0;
+    thiz->seconds += thiz->secondsInterval*6.25;
+    
     AudioGraph_renderSample(thiz, thiz->seconds, &out[i]);
   }
 }
@@ -59,6 +60,7 @@ struct AudioGraph * AudioGraph_create (int sampleRate) {
   struct AudioGraph * result = malloc(sizeof(struct AudioGraph));
   result->nodes = 0;
   result->sampleRate = sampleRate;
+  result->secondsInterval = 1.0 / (double) result->sampleRate;
   result->createNode = AudioGraph_create_node;
   result->renderSamples = AudioGraph_renderSamples;
   result->destination = result->createNode(result, DestinationNode);
