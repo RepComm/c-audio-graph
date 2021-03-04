@@ -80,6 +80,8 @@ struct Track {
   llnp keyframes;
   float duration;
   KeyFrameP (*addKeyFrame)(TrackP thiz, float time, float value, bool recalcTrackDuration);
+  float (*getValueAtTime)(TrackP thiz, float time);
+  KeyFrameP (*setValueAtTime)(TrackP thiz, float time, float value);
 };
 
 KeyFrameP Track_addKeyFrame (TrackP track, float time, float value, bool recalcTrackDuration) {
@@ -186,7 +188,9 @@ KeyFrameP Track_getOrCreateKeyFrameAtTime (TrackP track, float time, float timeT
 }
 
 KeyFrameP Track_setValueAtTime (TrackP track, float time, float value) {
-  return 0;
+  KeyFrameP result = Track_addKeyFrame(track, time, value, true);
+  //TODO - find keyframe if exists at time already
+  return result;
 }
 
 TrackP Track_create () {
@@ -194,6 +198,8 @@ TrackP Track_create () {
   result->keyframes = 0;
   result->duration = 0;
   result->addKeyFrame = &Track_addKeyFrame;
+  result->getValueAtTime = &Track_getValueAtTime;
+  result->setValueAtTime = &Track_setValueAtTime;
   return result;
 }
 

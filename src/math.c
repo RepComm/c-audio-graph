@@ -25,9 +25,9 @@ float m_sin_with_precision (float radians, int steps) {
 }
 
 float m_get_seconds () {
-  double res = 0;
+  float res = 0;
 
-  res = ((double) clock()) / CLOCKS_PER_SEC;
+  res = ((float) clock()) / CLOCKS_PER_SEC;
 
   return res;
 }

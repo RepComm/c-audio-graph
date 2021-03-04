@@ -3,20 +3,32 @@
 #ifndef AUDIOPARAM_C
 #define AUDIOPARAM_C
 
+#include "./cat.c"
 #include "../linkedlist.c"
 
-struct AudioParamTimeData {
-  float time;
-  float value;
-};
+#define AudioParamP struct AudioParam *
 
 struct AudioParam {
   float value;
-  llnp valueAnimationTrack;
+  TrackP track;
+  void (*setValueAtTime)(AudioParamP thiz, float time, float value);
+  float (*getValueAtTime)(AudioParamP thiz, float time);
 };
 
-void AudioParam_setValueAtTime (float time, float value) {
-  
+void AudioParam_setValueAtTime (AudioParamP param, float time, float value) {
+  param->track->setValueAtTime(param->track, time, value);
+}
+
+float AudioParam_getValueAtTime (AudioParamP param, float time) {
+  return param->track->getValueAtTime(param->track, time);
+}
+
+AudioParamP AudioParam_create (float value) {
+  AudioParamP result = malloc(sizeof(struct AudioParam));
+  result->setValueAtTime = &AudioParam_setValueAtTime;
+  result->getValueAtTime = &AudioParam_getValueAtTime;
+  result->track = Track_create();
+  return result;
 }
 
 #endif

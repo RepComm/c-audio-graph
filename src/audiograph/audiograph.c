@@ -8,9 +8,9 @@
 struct AudioGraph {
   struct lln * nodes;
   int sampleRate;
-  double secondsInterval;
+  float secondsInterval;
   struct AudioNode * destination;
-  double seconds;
+  float seconds;
 
   struct AudioNode * (*createNode)(struct AudioGraph * thiz, enum AudioNodeType type);
   void (*renderSamples)(struct AudioGraph * thiz, float out[], int outSize);
@@ -39,7 +39,7 @@ struct AudioNode * AudioGraph_create_node (struct AudioGraph * thiz, enum AudioN
   return result;
 }
 
-void AudioGraph_renderSample (struct AudioGraph * thiz, double seconds, float * out) {
+void AudioGraph_renderSample (struct AudioGraph * thiz, float seconds, float * out) {
   thiz->destination->renderSample(thiz->destination, seconds, out);
 }
 
@@ -60,7 +60,7 @@ struct AudioGraph * AudioGraph_create (int sampleRate) {
   struct AudioGraph * result = malloc(sizeof(struct AudioGraph));
   result->nodes = 0;
   result->sampleRate = sampleRate;
-  result->secondsInterval = 1.0 / (double) result->sampleRate;
+  result->secondsInterval = 1.0 / (float) result->sampleRate;
   result->createNode = AudioGraph_create_node;
   result->renderSamples = AudioGraph_renderSamples;
   result->destination = result->createNode(result, DestinationNode);

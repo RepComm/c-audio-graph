@@ -19,7 +19,7 @@ char * AudioNode_type_toString (enum AudioNodeType type) {
 }
 
 struct OscillatorNodeParams {
-  struct AudioParam frequency;
+  AudioParamP frequency;
 };
 
 struct AudioNode {
@@ -35,7 +35,7 @@ struct AudioNode {
   struct lln * (*getInputs)(struct AudioNode * thiz);
   void (*connectToNode)(struct AudioNode * thiz, struct AudioNode * to);
   void (*connectToParam)(struct AudioNode * thiz, struct AudioParam * to);
-  void (*renderSample)(struct AudioNode * thiz, double seconds, float * out);
+  void (*renderSample)(struct AudioNode * thiz, float seconds, float * out);
   bool (*isSource)(struct AudioNode * thiz);
   bool (*isDestination)(struct AudioNode * thiz);
 };
@@ -57,15 +57,16 @@ void AudioNode_connectNode (struct AudioNode * src, struct AudioNode * dest) {
   }
 }
 
-void AudioNode_renderSample (struct AudioNode * node, double time, float * out) {
+void AudioNode_renderSample (struct AudioNode * node, float time, float * out) {
   if (node->type == OscillatorNode) {
     //sine
+    struct OscillatorNodeParams * params = node->params;
 
     *out = sine_wave(
       time,
       //get the frequency value from node params
-      ((struct OscillatorNodeParams *) node->params)->frequency.value
-    ) / 2;
+      params->frequency->getValueAtTime(params->frequency, time)
+    );
 
 
     //square
@@ -108,7 +109,8 @@ void AudioNode_renderSample (struct AudioNode * node, double time, float * out) 
 
         current = current->next;
       }
-      *out /= count;
+      if (count != 0) *out /= count;
+      *out += m_f_epsilon; //This seems to help since stdout doesn't like writing 0.0
     }
   }
 }
@@ -131,8 +133,7 @@ struct AudioNode * AudioNode_create (enum AudioNodeType type) {
   //TODO - add other node params here
   if (type == OscillatorNode) {
     struct OscillatorNodeParams * params = malloc(sizeof(struct OscillatorNodeParams));
-    params->frequency.value = 10.0;
-
+    params->frequency = AudioParam_create(10.0);
     result->params = params;
   }
 

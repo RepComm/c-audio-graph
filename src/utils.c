@@ -104,4 +104,44 @@ bool char_in_string (char* haystack, char needle) {
   return false;
 }
 
+void nibble_to_hex (char nibble, char * out, int offset) {
+  if (nibble == 0) out[offset] = '0';
+  switch (nibble) {
+    case 0: out[offset] = '0'; break;
+    case 1: out[offset] = '1'; break;
+    case 2: out[offset] = '2'; break;
+    case 3: out[offset] = '3'; break;
+    case 4: out[offset] = '4'; break;
+    case 5: out[offset] = '5'; break;
+    case 6: out[offset] = '6'; break;
+    case 7: out[offset] = '7'; break;
+    case 8: out[offset] = '8'; break;
+    case 9: out[offset] = '9'; break;
+    case 10: out[offset] = 'a'; break;
+    case 11: out[offset] = 'b'; break;
+    case 12: out[offset] = 'c'; break;
+    case 13: out[offset] = 'd'; break;
+    case 14: out[offset] = 'e'; break;
+    case 15: out[offset] = 'f'; break;
+  }
+  return;
+}
+
+/**Write a byte into hex format (2 bytes) into char[offset] out
+ * 
+ */
+void byte_to_hex (char byte, char * out, int offset) {
+  nibble_to_hex(byte & 0b11110000, out, offset);
+  nibble_to_hex(byte & 0b00001111, out, offset+1);
+}
+
+/**Convert a float into its hex format
+ */
+void _32bit_to_hex (char * value, char * out, int offset) {
+  byte_to_hex(value[0], out, 0); //0, 1
+  byte_to_hex(value[1], out, 2); //2, 3
+  byte_to_hex(value[2], out, 4); //4, 5
+  byte_to_hex(value[3], out, 6); //6, 7
+}
+
 #endif
