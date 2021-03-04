@@ -4,6 +4,7 @@
 
 #include <time.h>
 
+const float m_f_epsilon = 0.00001;
 const float m_f_pi = 3.14;
 const float m_f_tau = 6.28;
 const float m_f_piover2 = 1.5707963267948966;
@@ -35,11 +36,35 @@ float m_sin (float radians) {
   return m_sin_with_precision(radians, 10);
 }
 
+/**Linearly interpolate between `from` and `to`
+ * 
+ * From and To can be any floating point values
+ * 
+ * By is a float between 0.0 and 1.0
+ * 
+ * Given From = 0 and To = 12
+ * By = 0.5 would return 6
+ * By = 1.0 would return 12
+ * By = 0.0 would return 0
+*/
 float lerp (float from, float to, float by) {
   return from*(1-by)+to*by;
 }
 
+/**In linear interpolation, we know From, To, and By (the interpolant)
+ * 
+ * In an inverseLerp, we know From, To, and the interpolated value
+ * Inverse lerp will return the By (interpolant) used in a lerp operation
+ * 
+ * Given From, To, By
+ * Value = lerp ( From, To, By )
+ * 
+ * Given From, To, Value
+ * By = inverseLerp ( From, To, Value )
+ */
 float inverseLerp (float from, float to, float value) {
+  //Fixes nan issue where to-from is a divide by zero
+  if (to - from == 0.0) to += m_f_epsilon;
   return (value - from) / (to - from);
 }
 
@@ -54,10 +79,7 @@ float m_arcsin (float x) {
   return m_f_piover2 - sqrt(1 - x) * (a + b * x + c * x2 + d * x3);
 }
 
-/**I don't know why people think this is so complicated
- * Leave it to C programmers to be picky over an if statement for "speed bonuses"
- * 
- * Like, bro. If its not fast enough, its the computer, not the code.
+/**Floating point absolute value
  */
 float m_fabs (float f) {
   if (f < 0) return -f;

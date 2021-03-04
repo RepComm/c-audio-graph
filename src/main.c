@@ -69,20 +69,23 @@ void graphtest_0 () {
 }
 
 int main(int argc, char **argv) {
+
+  // graphtest_0();
+
   TrackP track = Track_create();
   
   printf("Created track %p\n", track);
 
-  track->addKeyFrame(track, 0.01, 0.01, false);
+  track->addKeyFrame(track, 0.0, 0.0, false);
   track->addKeyFrame(track, 10.0, 2.0, false);
   track->addKeyFrame(track, 20.0, 1.0, true);
 
   printf("Track duration %f\n", track->duration);
 
-  for (float i=0.0; i < track->duration; i+=0.5) {
+  for (float i=0.0; i < track->duration; i+=0.1) {
     float value = Track_getValueAtTime(track, i);
     // float value = i;
-    printf("Value at time %f is %f\n", i, value);
+    printf("Value at time %g is %g\n", i, value);
   }
 
   return 0;
